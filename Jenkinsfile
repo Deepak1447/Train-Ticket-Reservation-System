@@ -2,6 +2,7 @@ pipeline {
     agent any
 
     environment {
+        DOCKER_HUB_REPO = "deepakcharan9988/train-ticket-reservation" // DockerHub username/repo
         DOCKER_HUB_CREDENTIALS = "docker" // Jenkins credential ID
     }
 
@@ -27,7 +28,6 @@ pipeline {
         stage('Docker Container') {
             steps {
                 script {
-                    // Run a container from the image we just built
                     sh """
                         docker run -d --name train-ticket-container -p 8080:8080 ${DOCKER_HUB_REPO}:latest
                     """
@@ -44,8 +44,7 @@ pipeline {
                 )]) {
                     sh '''
                         echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                        docker tag ${DOCKER_HUB_REPO}:latest $DOCKER_USER/train-ticket-reservation:latest
-                        docker push $DOCKER_USER/train-ticket-reservation:latest
+                        docker push ${DOCKER_HUB_REPO}:latest
                         docker logout
                     '''
                 }
