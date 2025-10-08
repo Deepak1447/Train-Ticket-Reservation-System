@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_HUB_REPO = "deepak1447/train-ticket-reservation" // local image name
+        DOCKER_HUB_REPO = "deepak1447/train-ticket-reservation"
         DOCKER_HUB_CREDENTIALS = "docker" // Jenkins credential ID
     }
 
@@ -21,8 +21,17 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
+                sh "docker build -t ${DOCKER_HUB_REPO}:latest ."
+            }
+        }
+
+        stage('Docker Container') {
+            steps {
                 script {
-                    sh "docker build -t ${DOCKER_HUB_REPO}:latest ."
+                    // Run a container from the image we just built
+                    sh """
+                        docker run -d --name train-ticket-container -p 8080:8080 ${DOCKER_HUB_REPO}:latest
+                    """
                 }
             }
         }
@@ -43,20 +52,6 @@ pipeline {
                 }
             }
         }
-
-        stage('Deploy (Optional)') {
-            steps {
-                echo "Deployment stage — customize for your server or Kubernetes cluster"
-                // Example: run Docker container locally
-                // sh "docker run -d -p 8080:8080 $DOCKER_USER/train-ticket-reservation:latest"
-
-                // Example: deploy to Kubernetes (if you have kubeconfig configured)
-                // withKubeConfig([credentialsId: 'kube-credentials', serverUrl: 'https://<cluster-api>']) {
-                //     sh "kubectl apply -f k8s/deployment.yaml"
-                // }
-            }
-        }
-    }
 
     post {
         success {
