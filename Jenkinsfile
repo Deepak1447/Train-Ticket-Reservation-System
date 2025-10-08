@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_HUB_REPO = "deepak1447/train-ticket-reservation"
+        DOCKER_HUB_REPO = "deepak1447/train-ticket-reservation" // local image name
         DOCKER_HUB_CREDENTIALS = "docker" // Jenkins credential ID
     }
 
@@ -28,28 +28,32 @@ pipeline {
         }
 
         stage('Push to DockerHub') {
-    steps {
-        withCredentials([usernamePassword(
-            credentialsId: 'docker',       // <-- your Jenkins credential ID
-            usernameVariable: 'DOCKER_USER',
-            passwordVariable: 'DOCKER_PASS'
-        )]) {
-            sh '''
-                echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                docker tag deepak1447/train-ticket-reservation:latest $DOCKER_USER/train-ticket-reservation:latest
-                docker push $DOCKER_USER/train-ticket-reservation:latest
-                docker logout
-            '''
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: "${DOCKER_HUB_CREDENTIALS}",
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    sh '''
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                        docker tag ${DOCKER_HUB_REPO}:latest $DOCKER_USER/train-ticket-reservation:latest
+                        docker push $DOCKER_USER/train-ticket-reservation:latest
+                        docker logout
+                    '''
+                }
+            }
         }
-    }
-}
-
 
         stage('Deploy (Optional)') {
             steps {
                 echo "Deployment stage — customize for your server or Kubernetes cluster"
-                // Example:
-                // sh "docker run -d -p 8080:8080 ${DOCKER_HUB_REPO}:latest"
+                // Example: run Docker container locally
+                // sh "docker run -d -p 8080:8080 $DOCKER_USER/train-ticket-reservation:latest"
+
+                // Example: deploy to Kubernetes (if you have kubeconfig configured)
+                // withKubeConfig([credentialsId: 'kube-credentials', serverUrl: 'https://<cluster-api>']) {
+                //     sh "kubectl apply -f k8s/deployment.yaml"
+                // }
             }
         }
     }
