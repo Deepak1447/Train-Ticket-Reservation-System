@@ -45,7 +45,7 @@ pipeline {
                 }
             }
         }
-
+    }
         stage('Deploy (Optional)') {
             steps {
                 echo "Deployment stage — customize for your server or Kubernetes cluster"
