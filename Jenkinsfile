@@ -28,21 +28,22 @@ pipeline {
         }
 
         stage('Push to DockerHub') {
-            steps {
-                withCredentials([usernamePassword(
-                    credentialsId: "${DOCKER_HUB_CREDENTIALS}",
-                    usernameVariable: 'DOCKER_USER',
-                    passwordVariable: 'DOCKER_PASS'
-                )]) {
-                    sh '''
-                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                        docker tag ${DOCKER_HUB_REPO}:latest $DOCKER_USER/deepak:latest
-                        docker push $DOCKER_USER/deepak:latest
-                        docker logout
-                    '''
-                }
-            }
+    steps {
+        withCredentials([usernamePassword(
+            credentialsId: 'docker',       // <-- your Jenkins credential ID
+            usernameVariable: 'DOCKER_USER',
+            passwordVariable: 'DOCKER_PASS'
+        )]) {
+            sh '''
+                echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                docker tag deepak1447/train-ticket-reservation:latest $DOCKER_USER/train-ticket-reservation:latest
+                docker push $DOCKER_USER/train-ticket-reservation:latest
+                docker logout
+            '''
         }
+    }
+}
+
 
         stage('Deploy (Optional)') {
             steps {
