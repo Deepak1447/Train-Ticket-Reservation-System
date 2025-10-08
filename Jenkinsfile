@@ -2,7 +2,6 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_HUB_REPO = "deepak1447/train-ticket-reservation"
         DOCKER_HUB_CREDENTIALS = "docker" // Jenkins credential ID
     }
 
@@ -53,6 +52,15 @@ pipeline {
             }
         }
 
+        stage('Deploy (Optional)') {
+            steps {
+                echo "Deployment stage — customize for your server or Kubernetes cluster"
+                // Example for Kubernetes deployment:
+                // sh "kubectl apply -f k8s/deployment.yaml"
+            }
+        }
+    }
+
     post {
         success {
             echo '✅ Build and Deployment Successful!'
@@ -61,4 +69,5 @@ pipeline {
             echo '❌ Build or Deployment Failed!'
         }
     }
+}
 }
