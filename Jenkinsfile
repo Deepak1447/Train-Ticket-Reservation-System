@@ -29,7 +29,7 @@ pipeline {
             steps {
                 script {
                     sh """
-                        docker run -d --name train-ticket-container -p 8080:8080 ${DOCKER_HUB_REPO}:latest
+                        docker run -d --name train-ticket-container -p 8088:80 ${DOCKER_HUB_REPO}:latest
                     """
                 }
             }
