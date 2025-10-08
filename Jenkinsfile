@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                git branch: 'main', url: 'https://github.com/Deepak1447/Train-Ticket-Reservation-System.git'
+                git branch: 'master', url: 'https://github.com/Deepak1447/Train-Ticket-Reservation-System.git'
             }
         }
 
