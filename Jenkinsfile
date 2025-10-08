@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKER_HUB_REPO = "deepak1447/train-ticket-reservation"
-        DOCKER_HUB_CREDENTIALS = "dockerhub-credentials" // Jenkins credential ID
+        DOCKER_HUB_CREDENTIALS = "docker" // Jenkins credential ID
     }
 
     stages {
