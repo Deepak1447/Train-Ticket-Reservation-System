@@ -22,35 +22,33 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh """
-                    docker build -t ${DOCKER_HUB_REPO}:latest .
-                    """
+                    sh "docker build -t ${DOCKER_HUB_REPO}:latest ."
                 }
             }
         }
 
-       stage('Push to DockerHub') {
+        stage('Push to DockerHub') {
             steps {
                 withCredentials([usernamePassword(
-                    credentialsId: 'docker',
+                    credentialsId: "${DOCKER_HUB_CREDENTIALS}",
                     usernameVariable: 'DOCKER_USER',
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
                     sh '''
                         echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                        docker tag deepak:latest $DOCKER_USER/deepak:latest
+                        docker tag ${DOCKER_HUB_REPO}:latest $DOCKER_USER/deepak:latest
                         docker push $DOCKER_USER/deepak:latest
                         docker logout
                     '''
                 }
-            }
-        }
-    }
+            }
+        }
+
         stage('Deploy (Optional)') {
             steps {
                 echo "Deployment stage — customize for your server or Kubernetes cluster"
                 // Example:
-                // sh 'docker run -d -p 8080:8080 ${DOCKER_HUB_REPO}:latest'
+                // sh "docker run -d -p 8080:8080 ${DOCKER_HUB_REPO}:latest"
             }
         }
     }
@@ -64,4 +62,3 @@ pipeline {
         }
     }
 }
-
