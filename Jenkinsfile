@@ -60,14 +60,4 @@ pipeline {
             }
         }
     }
-
-    post {
-        success {
-            echo '✅ Build and Deployment Successful!'
-        }
-        failure {
-            echo '❌ Build or Deployment Failed!'
-        }
-    }
-}
 }
