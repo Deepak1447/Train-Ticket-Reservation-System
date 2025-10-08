@@ -29,16 +29,22 @@ pipeline {
             }
         }
 
-        stage('Login & Push to DockerHub') {
+       stage('Push to DockerHub') {
             steps {
-                withCredentials([usernamePassword(credentialsId: "${DOCKER_HUB_CREDENTIALS}", usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-                    sh """
-                    echo "$PASS" | docker login -u "$USER" --password-stdin
-                    docker push ${DOCKER_HUB_REPO}:latest
-                    """
+                withCredentials([usernamePassword(
+                    credentialsId: 'docker',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    sh '''
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                        docker tag deepak:latest $DOCKER_USER/deepak:latest
+                        docker push $DOCKER_USER/deepak:latest
+                        docker logout
+                    '''
                 }
-            }
-        }
+            }
+        }
 
         stage('Deploy (Optional)') {
             steps {
