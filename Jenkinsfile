@@ -25,12 +25,19 @@ pipeline {
             }
         }
 
-        stage('Docker Container') {
-            steps {
-                script {
-                    sh """
-                        docker run -d --name train-ticket-container -p 8088:80 ${DOCKER_HUB_REPO}:latest
-                    """
+       stage('Docker Container') {
+    steps {
+        script {
+            sh """
+                # Remove existing container if it exists
+                docker rm -f train-ticket-container || true
+                # Run new container
+                docker run -d --name train-ticket-container -p 8088:80 ${DOCKER_HUB_REPO}:latest
+            """
+        }
+    }
+}
+
                 }
             }
         }
